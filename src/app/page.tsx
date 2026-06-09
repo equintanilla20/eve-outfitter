@@ -22,7 +22,7 @@ export default async function Home() {
     // Note: Your custom provider identifier in Supabase matches the name you set
     // usually structured as "custom:eveonline" or similar based on your setting string.
     const { data, error } = await serverSupabase.auth.signInWithOAuth({
-      provider: 'custom:eve-online' as Provider, 
+      provider: 'custom:eveonline' as Provider, 
       options: {
         redirectTo: 'http://localhost:3000/auth/callback',
         scopes: 'publicData',
