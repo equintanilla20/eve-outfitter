@@ -3,12 +3,18 @@ import { auth, signIn, signOut } from "@/auth";
 import { sql } from "@/lib/db";
 import FitImporter from "@/components/FitImporter";
 
+interface EveFit {
+  id: string;
+  ship_type: string;
+  fit_name: string;
+  created_at: string;
+}
+
 export default async function Home() {
   const session = await auth();
 
-  // Dynamically pull fits belonging specifically to this authenticated EVE user ID
   const fits = session?.user?.id
-    ? await sql`SELECT id, ship_type, fit_name, created_at FROM public.fits WHERE user_id = ${session.user.id} ORDER BY created_at DESC`
+    ? await sql<EveFit[]>`SELECT id, ship_type, fit_name, created_at FROM public.fits WHERE user_id = ${session.user.id} ORDER BY created_at DESC`
     : [];
 
   return (
@@ -42,14 +48,21 @@ export default async function Home() {
       {session ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-1">
-            <FitImporter />
+            {/* Find where <FitImporter /> is placed inside src/app/page.tsx and update it: */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="md:col-span-1">
+                {/* Pass the verified text character id string straight into the component props */}
+                <FitImporter currentUserId={session!.user!.id} />
+              </div>
+            </div>
           </div>
 
           <div className="md:col-span-2 bg-slate-900 p-6 rounded-lg border border-slate-800">
             <h2 className="text-lg font-semibold mb-4">Saved Library ({fits.length})</h2>
             {fits.length > 0 ? (
               <div className="space-y-3">
-                {fits.map((fit: any) => (
+                {/* 3. Swap (fit: any) for the typed interface variable signature */}
+                {fits.map((fit: EveFit) => (
                   <div key={fit.id} className="p-4 bg-slate-950 border border-slate-800 rounded flex justify-between items-center">
                     <div>
                       <div className="font-bold text-amber-400">{fit.fit_name}</div>
